@@ -1,11 +1,19 @@
 import React, { useRef, useState } from "react";
 import Header from "./Header";
 import { checkValidData } from "../utils/validate";
+import { useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth } from "../utils/firebase.js";
+import { addUser } from "../utils/userSlice";
+import { useDispatch } from "react-redux";
 
 const Login = () => {
   const email = useRef(null);
   const password = useRef(null);
   const name = useRef(null);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [isSignInForm, setIsSignInForm] = useState(true);
   const toggleSignInForm = () => {
@@ -15,10 +23,54 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState(null);
 
   const handleButtonClick = () => {
-    console.log("Email: " + email.current.value);
-    console.log("Password: " + password.current.value);
     const message = checkValidData(email.current.value, password.current.value, name?.current?.value);
     setErrorMessage(message);
+
+    if (message) return;
+
+    if (!isSignInForm) {
+      createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+
+          updateProfile(auth.currentUser, {
+            displayName: name.current.value, photoURL: "https://www.flaticon.com/free-icons/identity"
+          }).then(() => {
+            const {uid, email, displayName, photoURL} = auth.currentUser;
+            dispatch(addUser({uid: uid, email: email, displayName: displayName, photoURL:photoURL}));
+            navigate("/browse");
+          }).catch((error) => {
+            // An error occurred
+            setErrorMessage(error.message);
+          });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          if (errorCode === "auth/email-already-in-use") {
+            setErrorMessage("Email already registered. Log in!");
+          } else {
+            setErrorMessage(errorCode + " - " + errorMessage);
+          }
+        });
+    } else {
+      signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          navigate("/browse");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          if(errorCode === 'auth/invalid-credential'){
+            setErrorMessage('Invalid credentials, please try again!');
+          } else {
+            setErrorMessage(errorCode + " - " + errorMessage);
+          }
+        });
+    }
   };
 
   return (
