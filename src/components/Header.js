@@ -34,15 +34,15 @@ const Header = () => {
   };
 
   return (
-    <div className="absolute px-6 py-3 bg-gradient-to-b from-black w-full z-10 flex justify-between">
+    <div className="absolute p-6 bg-gradient-to-b bg-black w-full z-10 flex justify-between">
       <img
-        className="w-36"
+        className="w-32"
         src="site_logo.png"
         alt='logo'
       />
       {user && (<div className="flex">
         <img
-          className="w-16 m-2"
+          className="w-16 m-2 rounded-full"
           src={user.photoURL}
           alt='User Icon'
         />

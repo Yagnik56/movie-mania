@@ -2,3 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Add this to your global CSS */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for WebKit browsers */
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
