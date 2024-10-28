@@ -6,11 +6,17 @@ import { useSelector } from "react-redux";
 import { onAuthStateChanged } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { addUser, removeUser } from "../utils/userSlice";
+import { toggleGptSearchView } from "../utils/gptSlice";
 
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const showGptSearch = useSelector(store => store.gpt.showGptSearch)
   const user = useSelector(store => store.user);
+
+  const handleGptSearchClick = () => {
+    dispatch(toggleGptSearchView());
+  }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -34,15 +40,21 @@ const Header = () => {
   };
 
   return (
-    <div className="absolute p-6 bg-gradient-to-b bg-black w-full z-10 flex justify-between">
+    <div className="absolute px-6 py-4 bg-gradient-to-b from-black w-full z-10 flex flex-col md:flex-row justify-between">
       <img
-        className="w-32"
+        className="w-28 mx-auto md:mx-0"
         src="site_logo.png"
         alt='logo'
       />
-      {user && (<div className="flex">
+      {user && (<div className="flex mx-auto md:mx-0">
+        <button
+          className="px-4 mx-4 my-4 bg-red-800 text-white rounded-lg"
+          onClick={handleGptSearchClick}
+        >
+          {showGptSearch? "HomePage" : "GPT Search"}
+        </button>
         <img
-          className="w-16 m-2 rounded-full"
+          className="w-14 m-2 rounded-full"
           src={user.photoURL}
           alt='User Icon'
         />

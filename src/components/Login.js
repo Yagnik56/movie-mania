@@ -5,7 +5,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfi
 import { auth } from "../utils/firebase.js";
 import { addUser } from "../utils/userSlice";
 import { useDispatch } from "react-redux";
-import { User_AVATAR } from "../utils/constants.js";
+import { BG_IMG, User_AVATAR } from "../utils/constants.js";
 
 const Login = () => {
   const email = useRef(null);
@@ -73,13 +73,14 @@ const Login = () => {
   return (
     <div>
       <Header />
-      <div className="absolute">
+      <div className="absolute bg-black">
         <img
-          src="login_background.jpg"
+          className="h-screen w-screen object-cover opacity-80"
+          src={BG_IMG}
           alt='background'
         />
       </div>
-      <form onSubmit={(e)=> e.preventDefault()} className="w-1/4 absolute my-40 mx-auto right-0 left-0 p-12 bg-black text-white bg-opacity-75">
+      <form onSubmit={(e)=> e.preventDefault()} className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 xl:w-1/4 absolute my-40 mx-auto right-0 left-0 p-2 sm:p-6 lg:p-12 bg-black text-white bg-opacity-75 rounded-lg">
         <h1 className="font-bold text-3xl py-4">
           {isSignInForm ? "Sign In" : "Sign Up"}
         </h1>
